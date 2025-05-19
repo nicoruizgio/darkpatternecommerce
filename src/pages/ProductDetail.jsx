@@ -86,13 +86,15 @@ export default function ProductDetail({ products, status, addToCart }) {
               </div>
             </div>
             {/* Add to Cart Button */}
+            <div className='flex justify-start'>
             <button
               onClick={() => addToCart(product)}
-              className="w-full flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
+              className="w-1/3 flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
             >
               <ShoppingCart size={20} className="mr-2" />
               Add to Cart
             </button>
+            </div>
           </div>
         </div>
       </div>
