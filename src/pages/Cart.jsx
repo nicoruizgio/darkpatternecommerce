@@ -1,12 +1,8 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { removeFromCart, updateQuantity } from '../store/cartSlice';
 import { Trash2, Minus, Plus } from 'lucide-react';
 
-export default function Cart() {
-  const dispatch = useDispatch();
-  const cartItems = useSelector((state) => state.cart.items);
+export default function Cart({ cartItems, removeFromCart, updateQuantity }) {
   const total = cartItems.reduce((sum, item) => {
-    const price = item.discount 
+    const price = item.discount
       ? item.price * (1 - item.discount / 100)
       : item.price;
     return sum + price * item.quantity;
@@ -32,7 +28,7 @@ export default function Cart() {
                 <div className="flex-grow">
                   <h3 className="text-lg font-semibold text-gray-900">{item.title}</h3>
                   <p className="text-gray-600">
-                    ${item.discount 
+                    ${item.discount
                       ? (item.price * (1 - item.discount / 100)).toFixed(2)
                       : item.price.toFixed(2)
                     }
@@ -45,21 +41,21 @@ export default function Cart() {
                 </div>
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => dispatch(updateQuantity({ id: item.id, quantity: Math.max(0, item.quantity - 1) }))}
+                    onClick={() => updateQuantity(item.id, Math.max(0, item.quantity - 1))}
                     className="p-1 hover:bg-gray-100 rounded"
                   >
                     <Minus size={20} />
                   </button>
                   <span className="w-8 text-center">{item.quantity}</span>
                   <button
-                    onClick={() => dispatch(updateQuantity({ id: item.id, quantity: item.quantity + 1 }))}
+                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
                     className="p-1 hover:bg-gray-100 rounded"
                   >
                     <Plus size={20} />
                   </button>
                 </div>
                 <button
-                  onClick={() => dispatch(removeFromCart(item.id))}
+                  onClick={() => removeFromCart(item.id)}
                   className="p-2 text-red-600 hover:bg-red-50 rounded"
                 >
                   <Trash2 size={20} />

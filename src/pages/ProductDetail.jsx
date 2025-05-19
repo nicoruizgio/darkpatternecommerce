@@ -1,13 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { addToCart } from '../store/cartSlice';
 import { ShoppingCart } from 'lucide-react';
 
-export default function ProductDetail() {
+export default function ProductDetail({ products, status, addToCart }) {
   const { id } = useParams();
-  const dispatch = useDispatch();
-  const { items: products, status } = useSelector((state) => state.products);
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
@@ -91,7 +87,7 @@ export default function ProductDetail() {
             </div>
             {/* Add to Cart Button */}
             <button
-              onClick={() => dispatch(addToCart(product))}
+              onClick={() => addToCart(product)}
               className="w-full flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
             >
               <ShoppingCart size={20} className="mr-2" />

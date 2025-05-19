@@ -1,26 +1,10 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 import { ShoppingBag, Tag } from "lucide-react";
-import { fetchProducts } from "../store/productsSlice";
 
-export default function Home() {
-  const dispatch = useDispatch();
-  const {
-    items: products,
-    status,
-    error,
-  } = useSelector((state) => state.products);
+export default function Home({ products, status, error }) {
   const discountedProducts = products.filter(
     (product) => product.discount > 20
   );
-
-  // Fetch products when the component mounts
-  useEffect(() => {
-    if (status === "idle") {
-      dispatch(fetchProducts());
-    }
-  }, [status, dispatch]);
 
   const isLoading = (
     <div className="flex items-center justify-center py-12">
@@ -35,7 +19,7 @@ export default function Home() {
       return isLoading;
     }
 
-    if (status === "error") {
+    if (status === "failed") {
       return isError;
     }
 

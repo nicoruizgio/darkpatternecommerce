@@ -1,32 +1,15 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts } from "../store/productsSlice";
-import { addToCart } from "../store/cartSlice";
+import { useState, useEffect } from "react";
 import { ShoppingCart, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 
-export default function Products() {
-  const dispatch = useDispatch();
-  const {
-    items: products,
-    status,
-    error,
-  } = useSelector((state) => state.products);
+export default function Products({ products, status, error, addToCart }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
 
-  // Fetch products when the component mounts
-  useEffect(() => {
-    if (status === "idle") {
-      dispatch(fetchProducts());
-    }
-  }, [status, dispatch]);
-
   // Extract unique categories from products
   useEffect(() => {
     if (products.length > 0) {
-      // Use set to automatically filter duplicates
       const uniqueCategories = [
         ...new Set(products.map((product) => product.category)),
       ];
@@ -52,7 +35,7 @@ export default function Products() {
       );
     }
 
-    if (status === "error") {
+    if (status === "failed") {
       return <div className="text-center text-red-600 mt-8">{error}</div>;
     }
 
@@ -105,7 +88,7 @@ export default function Products() {
             </Link>
             <div className="p-4 pt-2">
               <button
-                onClick={() => dispatch(addToCart(product))}
+                onClick={() => addToCart(product)}
                 className="w-full flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"
               >
                 <ShoppingCart size={20} className="mr-2" />

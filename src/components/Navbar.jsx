@@ -1,9 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { ShoppingCart, Home, Package } from 'lucide-react';
-import { useSelector } from 'react-redux';
 
-export default function Navbar() {
-  const cartItems = useSelector((state) => state.cart.items);
+export default function Navbar({ cartItems }) {
   const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
