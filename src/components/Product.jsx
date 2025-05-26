@@ -6,7 +6,7 @@ const Product = ({ addToCart, product }) => {
   return (
     <div
       key={product.id}
-      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+      className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col hover:shadow-lg transition-shadow duration-300"
     >
       <Link to={`/products/${product.id}`} className="block">
         <div className="relative h-64">
@@ -49,12 +49,15 @@ const Product = ({ addToCart, product }) => {
           </div>
         </div>
       </Link>
-      <div className="p-4 pt-2">
+      <div className="p-4 mt-auto">
         <button
-          onClick={() => addToCart(product)}
-          className="w-full flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"
+          onClick={(e) => {
+            e.preventDefault(); // Prevent navigation when clicking the button
+            addToCart(product);
+          }}
+          className="w-full flex items-center justify-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
         >
-          <ShoppingCart size={20} className="mr-2" />
+          <ShoppingCart size={18} className="mr-2" />
           Add to Cart
         </button>
       </div>

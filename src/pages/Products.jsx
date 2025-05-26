@@ -2,11 +2,24 @@ import { useState, useEffect } from "react";
 
 import Product from "../components/Product";
 import SeachMenu from "../components/SeachMenu";
+import Nagging from "../components/dark-patterns/Nagging";
 
-export default function Products({ products, status, error, addToCart }) {
+export default function Products({ products, status, error, addToCart, darkPatterns, updateDarkPattern }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
+  const [showNaggingModal, setShowNaggingModal] = useState(false);
+
+  // Show nagging modal after 3 seconds if enabled in dark patterns
+  useEffect(() => {
+    if (darkPatterns?.nagging) {
+      const timer = setTimeout(() => {
+        setShowNaggingModal(true);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [darkPatterns?.nagging]);
 
   // Extract unique categories from products
   useEffect(() => {
@@ -64,6 +77,12 @@ export default function Products({ products, status, error, addToCart }) {
 
       {/* Display products */}
       {renderedContent()}
+
+      <Nagging
+        isOpen={showNaggingModal}
+        onClose={() => setShowNaggingModal(false)}
+        updateDarkPattern={updateDarkPattern}
+      />
     </div>
   );
 }

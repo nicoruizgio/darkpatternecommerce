@@ -1,14 +1,18 @@
-import { useNavigate } from 'react-router-dom';
-import { X, Check } from 'lucide-react';
-import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
+import { X, Check } from "lucide-react";
+import { useState } from "react";
 
-export default function ForcedRegistration({ isOpen, onClose }) {
+export default function ForcedRegistration({
+  isOpen,
+  onClose,
+  updateDarkPattern,
+}) {
   const navigate = useNavigate();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
 
   const handleSkip = () => {
-    navigate('/products');
+    navigate("/products");
     onClose();
   };
 
@@ -20,9 +24,12 @@ export default function ForcedRegistration({ isOpen, onClose }) {
       setIsLoggingIn(false);
       setLoginSuccess(true);
 
+      // Set forced registration to false
+      updateDarkPattern("forcedRegistration", false);
+
       // Redirect after showing success message for a moment
       setTimeout(() => {
-        navigate('/products');
+        navigate("/products");
         onClose();
         // Reset states for next time modal opens
         setLoginSuccess(false);
@@ -38,12 +45,15 @@ export default function ForcedRegistration({ isOpen, onClose }) {
         {!isLoggingIn && !loginSuccess && (
           <>
             <div className="flex items-center justify-center mb-4">
-              <h2 className="text-2xl font-bold text-gray-800 text-center">Log in to start shopping</h2>
+              <h2 className="text-2xl font-bold text-gray-800 text-center">
+                Log in to start shopping
+              </h2>
             </div>
 
             <div className="mb-6">
               <p className="text-gray-600 mb-4 text-center">
-                And enjoy exclusive deals, personalized recommendations, and a seamless shopping experience.
+                And enjoy exclusive deals, personalized recommendations, and a
+                seamless shopping experience.
               </p>
             </div>
 
@@ -76,7 +86,9 @@ export default function ForcedRegistration({ isOpen, onClose }) {
             <div className="bg-green-100 p-3 rounded-full mb-4">
               <Check className="text-green-600" size={32} />
             </div>
-            <h3 className="text-xl font-bold text-gray-800 mb-2">Login Successful!</h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-2">
+              Login Successful!
+            </h3>
             <p className="text-gray-600">Redirecting you to products...</p>
           </div>
         )}
@@ -84,4 +96,3 @@ export default function ForcedRegistration({ isOpen, onClose }) {
     </div>
   );
 }
-

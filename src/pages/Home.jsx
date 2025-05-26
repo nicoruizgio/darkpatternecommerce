@@ -4,9 +4,8 @@ import { ShoppingBag, Tag } from "lucide-react";
 
 import HotDeals from "../components/HotDeals";
 import ForcedRegistration from "../components/dark-patterns/ForcedRegistration";
-import { darkPatterns } from "../App";
 
-export default function Home({ products, status, error }) {
+export default function Home({ products, status, error, darkPatterns, updateDarkPattern }) {
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
   const navigate = useNavigate();
   const discountedProducts = products.filter(
@@ -39,9 +38,7 @@ export default function Home({ products, status, error }) {
 
     return (
       discountedProducts.length > 0 && (
-        <HotDeals
-          discountedProducts={discountedProducts}
-          />
+        <HotDeals discountedProducts={discountedProducts} />
       )
     );
   };
@@ -73,6 +70,7 @@ export default function Home({ products, status, error }) {
       <ForcedRegistration
         isOpen={showRegistrationModal}
         onClose={() => setShowRegistrationModal(false)}
+        updateDarkPattern={updateDarkPattern}
       />
     </div>
   );
