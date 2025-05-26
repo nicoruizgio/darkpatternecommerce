@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
+import accessoriesMap from "./utils/accessoriesMap";
 
 // Dark patterns
 export const defaultDarkPatterns = {
@@ -78,17 +79,18 @@ function App() {
     // Add the main product
     addToCart(product);
 
-    // If accessory is preselected, also add the headphone case
+    // If accessory is preselected, add the appropriate accessory based on category
     if (isPreselected && darkPatterns.sneak) {
+      // Get the appropriate accessory based on product category
+      const accessory = accessoriesMap[product.category]
+
+      // Add accessory to cart
       const accessoryProduct = {
-        id: 'headphone-case-1',
-        title: 'Headphone Case',
-        price: 5,
-        image: '/src/assets/headphone-case.jpg',
-        category: 'accessories',
-        description: 'Protective case for your headphones',
-        quantity: 1
+        ...accessory,
+        quantity: 1,
+        category: 'accessories'
       };
+
       addToCart(accessoryProduct);
     }
   };

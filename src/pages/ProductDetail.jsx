@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 
 import Preselection from "../components/dark-patterns/Preselection";
+import accessoriesMap from "../utils/accessoriesMap";
 
 export default function ProductDetail({
   products,
@@ -25,6 +26,10 @@ export default function ProductDetail({
     }
   }, [id, products]);
 
+  const getAccessoryForProduct = (product) => {
+    return accessoriesMap[product.category] || null;
+  };
+
   if (status === "loading" || !product) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -32,6 +37,8 @@ export default function ProductDetail({
       </div>
     );
   }
+
+  const accessory = getAccessoryForProduct(product);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -112,6 +119,7 @@ export default function ProductDetail({
               <Preselection
                 isPreselected={isPreselected}
                 setIsPreselected={setIsPreselected}
+                accessory={accessory}
               />
             )}
             {/* Add to Cart Button */}
