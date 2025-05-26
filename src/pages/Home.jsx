@@ -1,12 +1,24 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { ShoppingBag, Tag } from "lucide-react";
 
 import HotDeals from "../components/HotDeals";
+import ForcedRegistration from "../components/dark-patterns/ForcedRegistration";
+import { darkPatterns } from "../App";
 
 export default function Home({ products, status, error }) {
+  const [showRegistrationModal, setShowRegistrationModal] = useState(false);
+  const navigate = useNavigate();
   const discountedProducts = products.filter(
     (product) => product.discount > 20
   );
+
+  const handleStartShopping = (e) => {
+    if (darkPatterns.forcedRegistration) {
+      e.preventDefault();
+      setShowRegistrationModal(true);
+    }
+  };
 
   const isLoading = (
     <div className="flex items-center justify-center py-12">
@@ -48,6 +60,7 @@ export default function Home({ products, status, error }) {
           <Link
             to="/products"
             className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
+            onClick={handleStartShopping}
           >
             <ShoppingBag className="mr-2" size={20} />
             Start Shopping
@@ -56,6 +69,11 @@ export default function Home({ products, status, error }) {
 
         {renderContent()}
       </div>
+
+      <ForcedRegistration
+        isOpen={showRegistrationModal}
+        onClose={() => setShowRegistrationModal(false)}
+      />
     </div>
   );
 }

@@ -15,11 +15,6 @@ const Product = ({ addToCart, product }) => {
             alt={product.title}
             className="w-full h-full object-contain p-4"
           />
-          {product.discount && (
-            <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full text-sm font-semibold">
-              {product.discount}% OFF
-            </div>
-          )}
         </div>
         <div className="p-4 pb-2">
           <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
@@ -31,9 +26,14 @@ const Product = ({ addToCart, product }) => {
           <div className="flex items-center">
             <div className="flex flex-col">
               {product.discount ? (
-                <span className="text-xl font-bold text-red-500">
-                  ${(product.price * (1 - product.discount / 100)).toFixed(2)}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-bold text-red-500">
+                    ${(product.price * (1 - product.discount / 100)).toFixed(2)}
+                  </span>
+                  <div className="bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                    {product.discount}% OFF
+                  </div>
+                </div>
               ) : (
                 <span className="text-xl font-bold text-gray-900">
                   ${product.price.toFixed(2)}

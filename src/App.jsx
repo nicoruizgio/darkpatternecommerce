@@ -8,6 +8,11 @@ import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 
+// Dark patterns
+export const darkPatterns = {
+  forcedRegistration: true,
+}
+
 function App() {
   const [products, setProducts] = useState([]);
   const [cartItems, setCartItems] = useState([]);
@@ -22,7 +27,7 @@ function App() {
   }, [status]);
 
   // List of products with missing images
-  const invalidProductsIds = [8,14,17,27 ]
+  const invalidProductsIds = [8, 14, 17, 27];
 
   const fetchProducts = async () => {
     setStatus("loading");
