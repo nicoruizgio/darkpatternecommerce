@@ -6,7 +6,7 @@ const Preselection = ({ isPreselected, setIsPreselected, accessory }) => {
     setIsPreselected(checked);
   };
 
-  // Use default values if accessory prop is not provided
+
   const title = accessory?.title || "Headphone Case";
   const price = accessory?.price || 5;
   const description = accessory?.description || "Protect your headphones with this durable case";

@@ -1,8 +1,9 @@
 import React from "react";
 import { ShoppingCart, Search } from "lucide-react";
 import { Link } from "react-router-dom";
+import HighDemand from "./dark-patterns/HighDemand";
 
-const Product = ({ addToCart, product }) => {
+const Product = ({ addToCart, product, darkPatterns }) => {
   return (
     <div
       key={product.id}
@@ -15,6 +16,7 @@ const Product = ({ addToCart, product }) => {
             alt={product.title}
             className="w-full h-full object-contain p-4"
           />
+          {darkPatterns?.highDemand && <HighDemand count={product.highDemand} />}
         </div>
         <div className="p-4 pb-2">
           <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 
 import Preselection from "../components/dark-patterns/Preselection";
+import HighDemand from "../components/dark-patterns/HighDemand";
 import accessoriesMap from "../utils/accessoriesMap";
 
 export default function ProductDetail({
@@ -11,8 +12,8 @@ export default function ProductDetail({
   addToCart,
   darkPatterns,
   updateDarkPattern,
-  isPreselected,
-  setIsPreselected,
+  preselectedAccessories,
+  updatePreselection,
 }) {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -45,12 +46,13 @@ export default function ProductDetail({
       <div className="bg-white rounded-lg shadow-lg p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image */}
-          <div className="flex flex-col items-center justify-center bg-white p-4">
+          <div className="flex flex-col items-center justify-center bg-white p-4 relative">
             <img
               src={product.image}
               alt={product.title}
               className="max-h-96 object-contain"
             />
+            {darkPatterns?.highDemand && <HighDemand count={product.highDemand} />}
           </div>
           {/* Product Details */}
           <div className="flex flex-col justify-between">
@@ -117,9 +119,11 @@ export default function ProductDetail({
             {/* Dark Patterns Preselection */}
             {darkPatterns?.sneak && (
               <Preselection
-                isPreselected={isPreselected}
-                setIsPreselected={setIsPreselected}
-                accessory={accessory}
+                isPreselected={preselectedAccessories[product.id] ?? true}
+                setIsPreselected={(value) =>
+                  updatePreselection(product.id, value)
+                }
+                accessory={accessoriesMap[product.category]}
               />
             )}
             {/* Add to Cart Button */}

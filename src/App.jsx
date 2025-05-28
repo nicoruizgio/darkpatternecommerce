@@ -14,6 +14,8 @@ export const defaultDarkPatterns = {
   forcedRegistration: true,
   nagging: true,
   sneak: true,
+  dripPricing: true,
+  highDemand: true,
 };
 
 function App() {
@@ -22,13 +24,32 @@ function App() {
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
   const [darkPatterns, setDarkPatterns] = useState(defaultDarkPatterns);
-  const [isPreselected, setIsPreselected] = useState(true);
+  const [preselectedAccessories, setPreselectedAccessories] = useState({});
 
   // New function to update dark patterns
   const updateDarkPattern = (patternName, value) => {
     setDarkPatterns((prev) => ({
       ...prev,
       [patternName]: value,
+    }));
+  };
+
+  // Initialize preselections when products are loaded
+  useEffect(() => {
+    if (status === "succeeded") {
+      const initialPreselections = {};
+      products.forEach((product) => {
+        initialPreselections[product.id] = true;
+      });
+      setPreselectedAccessories(initialPreselections);
+    }
+  }, [status, products]);
+
+  // Add this function to update preselection for a specific product
+  const updatePreselection = (productId, isPreselected) => {
+    setPreselectedAccessories((prev) => ({
+      ...prev,
+      [productId]: isPreselected,
     }));
   };
 
@@ -48,9 +69,86 @@ function App() {
       const response = await axios.get(
         "https://fakestoreapi.in/api/products?limit=150"
       );
-      const filteredProducts = response.data.products.filter(
+      let filteredProducts = response.data.products.filter(
         (product) => !invalidProductsIds.includes(product.id)
       );
+
+      // Define products that should have no discount
+      const productsWithoutDiscount = [10];
+
+      // Define products with specific discount values
+      const productDiscounts = {
+        12: 50,
+      };
+
+      // Define high demand values for specific products
+      const highDemandValues = {
+        1: 8,
+        2: 9,
+        5: 7,
+        7: 6,
+        9: 9,
+        12: 8,
+        15: 7
+      };
+
+      // Define countdown timer for specific products
+      const countdownTimerProducts = [15,54]
+
+      // Define custom testimonials for specific products
+      const productTestimonials = {
+        1: {
+          name: "John Smith",
+          testimonial: "This product completely changed my life!"
+        },
+        3: {
+          name: "Sarah Johnson",
+          testimonial: "Best purchase I've made all year."
+        },
+        5: {
+          name: "Michael Brown",
+          testimonial: "Excellent quality and fast shipping!"
+        },
+        7: {
+          name: "Emily Davis",
+          testimonial: "I've recommended this to all my friends."
+        }
+      };
+
+      // Modify products based on ID
+      filteredProducts = filteredProducts.map(product => {
+        const modifiedProduct = { ...product };
+
+        // Apply discount logic
+        if (productsWithoutDiscount.includes(product.id)) {
+          delete modifiedProduct.discount;
+        } else if (product.id in productDiscounts) {
+          modifiedProduct.discount = productDiscounts[product.id];
+        }
+
+        // Apply high demand value
+        if (product.id in highDemandValues) {
+          modifiedProduct.highDemand = highDemandValues[product.id];
+        }
+
+        // Apply countdown timer
+        if (product.id in countdownTimerProducts) {
+          modifiedProduct.countdownTimer = true;
+        }
+
+        // Apply testimonials
+        if (product.id in productTestimonials) {
+          modifiedProduct.testimonials = productTestimonials[product.id];
+        } else {
+          modifiedProduct.testimonials = {
+            name: `Happy Customer ${product.id}`,
+            testimonial: `This ${product.title} exceeded my expectations!`
+          };
+        }
+
+        return modifiedProduct;
+      });
+
       setProducts(filteredProducts);
       setStatus("succeeded");
     } catch (err) {
@@ -79,16 +177,16 @@ function App() {
     // Add the main product
     addToCart(product);
 
-    // If accessory is preselected, add the appropriate accessory based on category
-    if (isPreselected && darkPatterns.sneak) {
+    // Check preselection state for this specific product
+    if ((preselectedAccessories[product.id] ?? true) && darkPatterns.sneak) {
       // Get the appropriate accessory based on product category
-      const accessory = accessoriesMap[product.category]
+      const accessory = accessoriesMap[product.category];
 
       // Add accessory to cart
       const accessoryProduct = {
         ...accessory,
         quantity: 1,
-        category: 'accessories'
+        category: "accessories",
       };
 
       addToCart(accessoryProduct);
@@ -141,7 +239,8 @@ function App() {
                 addToCart={addToCartWithAccessories}
                 darkPatterns={darkPatterns}
                 updateDarkPattern={updateDarkPattern}
-                isPreselected={isPreselected}
+                preselectedAccessories={preselectedAccessories}
+                updatePreselection={updatePreselection}
               />
             }
           />
@@ -154,8 +253,8 @@ function App() {
                 addToCart={addToCartWithAccessories}
                 darkPatterns={darkPatterns}
                 updateDarkPattern={updateDarkPattern}
-                isPreselected={isPreselected}
-                setIsPreselected={setIsPreselected}
+                preselectedAccessories={preselectedAccessories}
+                updatePreselection={updatePreselection}
               />
             }
           />
@@ -166,6 +265,7 @@ function App() {
                 cartItems={cartItems}
                 removeFromCart={removeFromCart}
                 updateQuantity={updateQuantity}
+                darkPatterns={darkPatterns}
               />
             }
           />

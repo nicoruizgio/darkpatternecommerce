@@ -1,12 +1,15 @@
 import { Trash2, Minus, Plus } from 'lucide-react';
 
-export default function Cart({ cartItems, removeFromCart, updateQuantity }) {
-  const total = cartItems.reduce((sum, item) => {
+export default function Cart({ cartItems, removeFromCart, updateQuantity, darkPatterns }) {
+  const subtotal = cartItems.reduce((sum, item) => {
     const price = item.discount
       ? item.price * (1 - item.discount / 100)
       : item.price;
     return sum + price * item.quantity;
   }, 0);
+
+  const tax = darkPatterns.dripPricing ? subtotal * 0.1 : 0;
+  const total = subtotal + tax;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -76,7 +79,17 @@ export default function Cart({ cartItems, removeFromCart, updateQuantity }) {
               ))}
             </div>
             <div className="border-t pt-4">
-              <div className="flex justify-between font-semibold text-lg">
+              <div className="flex justify-between text-gray-600">
+                <span>Subtotal</span>
+                <span>${subtotal.toFixed(2)}</span>
+              </div>
+              {darkPatterns.dripPricing && (
+                <div className="flex justify-between text-gray-600 mt-2">
+                  <span>Tax (10%)</span>
+                  <span>${tax.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex justify-between font-semibold text-lg mt-2">
                 <span>Total</span>
                 <span>${total.toFixed(2)}</span>
               </div>
