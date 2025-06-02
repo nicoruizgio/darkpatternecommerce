@@ -2,6 +2,7 @@ import React from "react";
 import { ShoppingCart, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import HighDemand from "./dark-patterns/HighDemand";
+import CountdownTimer from "./dark-patterns/CountdownTimer";
 
 const Product = ({ addToCart, product, darkPatterns }) => {
   return (
@@ -25,6 +26,9 @@ const Product = ({ addToCart, product, darkPatterns }) => {
           <p className="text-gray-600 mb-4 line-clamp-2">
             {product.description}
           </p>
+          {product.discount && darkPatterns?.countdownTimer && product.countdownTimer && (
+                <CountdownTimer />
+              )}
           <div className="flex items-center">
             <div className="flex flex-col">
               {product.discount ? (
@@ -47,6 +51,7 @@ const Product = ({ addToCart, product, darkPatterns }) => {
                   ${product.price.toFixed(2)}
                 </span>
               )}
+
             </div>
           </div>
         </div>

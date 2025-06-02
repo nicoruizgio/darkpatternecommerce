@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import axios from "axios";
+import { CountdownProvider } from "./context/CountdownContext";
 
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
@@ -16,6 +17,7 @@ export const defaultDarkPatterns = {
   sneak: true,
   dripPricing: true,
   highDemand: true,
+  countdownTimer: true,
 };
 
 function App() {
@@ -213,65 +215,67 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar cartItems={cartItems} />
-      <main>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Home
-                products={products}
-                status={status}
-                error={error}
-                darkPatterns={darkPatterns}
-                updateDarkPattern={updateDarkPattern}
-              />
-            }
-          />
-          <Route
-            path="/products"
-            element={
-              <Products
-                products={products}
-                status={status}
-                error={error}
-                addToCart={addToCartWithAccessories}
-                darkPatterns={darkPatterns}
-                updateDarkPattern={updateDarkPattern}
-                preselectedAccessories={preselectedAccessories}
-                updatePreselection={updatePreselection}
-              />
-            }
-          />
-          <Route
-            path="/products/:id"
-            element={
-              <ProductDetail
-                products={products}
-                status={status}
-                addToCart={addToCartWithAccessories}
-                darkPatterns={darkPatterns}
-                updateDarkPattern={updateDarkPattern}
-                preselectedAccessories={preselectedAccessories}
-                updatePreselection={updatePreselection}
-              />
-            }
-          />
-          <Route
-            path="/cart"
-            element={
-              <Cart
-                cartItems={cartItems}
-                removeFromCart={removeFromCart}
-                updateQuantity={updateQuantity}
-                darkPatterns={darkPatterns}
-              />
-            }
-          />
-        </Routes>
-      </main>
-    </div>
+    <CountdownProvider>
+      <div className="min-h-screen bg-gray-50">
+        <Navbar cartItems={cartItems} />
+        <main>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Home
+                  products={products}
+                  status={status}
+                  error={error}
+                  darkPatterns={darkPatterns}
+                  updateDarkPattern={updateDarkPattern}
+                />
+              }
+            />
+            <Route
+              path="/products"
+              element={
+                <Products
+                  products={products}
+                  status={status}
+                  error={error}
+                  addToCart={addToCartWithAccessories}
+                  darkPatterns={darkPatterns}
+                  updateDarkPattern={updateDarkPattern}
+                  preselectedAccessories={preselectedAccessories}
+                  updatePreselection={updatePreselection}
+                />
+              }
+            />
+            <Route
+              path="/products/:id"
+              element={
+                <ProductDetail
+                  products={products}
+                  status={status}
+                  addToCart={addToCartWithAccessories}
+                  darkPatterns={darkPatterns}
+                  updateDarkPattern={updateDarkPattern}
+                  preselectedAccessories={preselectedAccessories}
+                  updatePreselection={updatePreselection}
+                />
+              }
+            />
+            <Route
+              path="/cart"
+              element={
+                <Cart
+                  cartItems={cartItems}
+                  removeFromCart={removeFromCart}
+                  updateQuantity={updateQuantity}
+                  darkPatterns={darkPatterns}
+                />
+              }
+            />
+          </Routes>
+        </main>
+      </div>
+    </CountdownProvider>
   );
 }
 
