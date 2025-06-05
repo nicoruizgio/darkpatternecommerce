@@ -63,8 +63,8 @@ export default function Home({ products, status, error, darkPatterns, updateDark
             Start Shopping
           </Link>
         </div>
+          {/* {renderContent()} */}
 
-        {renderContent()}
       </div>
 
       <ForcedRegistration

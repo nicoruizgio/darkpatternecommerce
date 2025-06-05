@@ -10,7 +10,7 @@ export default function Products({ products, status, error, addToCart, darkPatte
   const [categories, setCategories] = useState([]);
   const [showNaggingModal, setShowNaggingModal] = useState(false);
 
-  // Show nagging modal after 3 seconds if enabled in dark patterns
+
   useEffect(() => {
     if (darkPatterns?.nagging) {
       const timer = setTimeout(() => {

@@ -4,23 +4,26 @@ const CountdownContext = createContext();
 
 export function CountdownProvider({ children }) {
   const [timeLeft, setTimeLeft] = useState(() => {
-    // Try to load from localStorage if it exists
     const savedTime = localStorage.getItem("countdownTime");
     if (savedTime) {
       const parsedTime = JSON.parse(savedTime);
-      // Check if the saved time is still valid (not expired)
+
       const savedTimestamp = localStorage.getItem("countdownTimestamp");
       if (savedTimestamp) {
-        const elapsedSeconds = Math.floor((Date.now() - parseInt(savedTimestamp)) / 1000);
-        // Adjust the time based on elapsed seconds
-        let totalSeconds = parsedTime.hours * 3600 + parsedTime.minutes * 60 + parsedTime.seconds - elapsedSeconds;
+        const elapsedSeconds = Math.floor(
+          (Date.now() - parseInt(savedTimestamp)) / 1000
+        );
 
-        // Reset if expired
+        let totalSeconds =
+          parsedTime.hours * 3600 +
+          parsedTime.minutes * 60 +
+          parsedTime.seconds -
+          elapsedSeconds;
+
         if (totalSeconds <= 0) {
           return { hours: 12, minutes: 0, seconds: 0 };
         }
 
-        // Otherwise calculate the new time
         const hours = Math.floor(totalSeconds / 3600);
         totalSeconds %= 3600;
         const minutes = Math.floor(totalSeconds / 60);
@@ -30,15 +33,17 @@ export function CountdownProvider({ children }) {
       }
     }
 
-    // Default initial state
     return { hours: 12, minutes: 0, seconds: 0 };
   });
 
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prevTime) => {
-        if (prevTime.hours === 0 && prevTime.minutes === 0 && prevTime.seconds === 0) {
-          // Reset to 12 hours when countdown reaches 0
+        if (
+          prevTime.hours === 0 &&
+          prevTime.minutes === 0 &&
+          prevTime.seconds === 0
+        ) {
           return { hours: 12, minutes: 0, seconds: 0 };
         }
 
@@ -56,9 +61,12 @@ export function CountdownProvider({ children }) {
           newHours -= 1;
         }
 
-        const newTime = { hours: newHours, minutes: newMinutes, seconds: newSeconds };
+        const newTime = {
+          hours: newHours,
+          minutes: newMinutes,
+          seconds: newSeconds,
+        };
 
-        // Save to localStorage
         localStorage.setItem("countdownTime", JSON.stringify(newTime));
         localStorage.setItem("countdownTimestamp", Date.now().toString());
 

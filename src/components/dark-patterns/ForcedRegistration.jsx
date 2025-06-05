@@ -19,19 +19,16 @@ export default function ForcedRegistration({
   const handleLogin = () => {
     setIsLoggingIn(true);
 
-    // Simulate login process with a 2 second delay
     setTimeout(() => {
       setIsLoggingIn(false);
       setLoginSuccess(true);
 
-      // Set forced registration to false
       updateDarkPattern("forcedRegistration", false);
 
-      // Redirect after showing success message for a moment
       setTimeout(() => {
         navigate("/products");
         onClose();
-        // Reset states for next time modal opens
+
         setLoginSuccess(false);
       }, 1500);
     }, 2000);

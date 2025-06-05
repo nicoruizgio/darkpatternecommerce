@@ -1,6 +1,10 @@
+import { useState } from 'react';
 import { Trash2, Minus, Plus } from 'lucide-react';
+import PurchaseSuccessful from '../components/PurchaseSuccessful';
 
 export default function Cart({ cartItems, removeFromCart, updateQuantity, darkPatterns }) {
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
   const subtotal = cartItems.reduce((sum, item) => {
     const price = item.discount
       ? item.price * (1 - item.discount / 100)
@@ -10,6 +14,19 @@ export default function Cart({ cartItems, removeFromCart, updateQuantity, darkPa
 
   const tax = darkPatterns.dripPricing ? subtotal * 0.1 : 0;
   const total = subtotal + tax;
+
+  const handleCheckout = () => {
+    setShowSuccessModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowSuccessModal(false);
+  };
+
+  const clearCart = () => {
+    // Remove all items from cart
+    cartItems.forEach(item => removeFromCart(item.id));
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -94,12 +111,20 @@ export default function Cart({ cartItems, removeFromCart, updateQuantity, darkPa
                 <span>${total.toFixed(2)}</span>
               </div>
             </div>
-            <button className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300">
+            <button
+              onClick={handleCheckout}
+              className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300">
               Checkout
             </button>
           </div>
         </div>
       )}
+
+      <PurchaseSuccessful
+        isOpen={showSuccessModal}
+        onClose={handleCloseModal}
+        onComplete={clearCart}
+      />
     </div>
   );
 }

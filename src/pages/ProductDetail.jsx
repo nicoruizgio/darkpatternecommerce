@@ -5,6 +5,7 @@ import { ShoppingCart } from "lucide-react";
 import Preselection from "../components/dark-patterns/Preselection";
 import HighDemand from "../components/dark-patterns/HighDemand";
 import CountdownTimer from "../components/dark-patterns/CountdownTimer";
+import Testimonials from "../components/dark-patterns/Testimonials";
 import accessoriesMap from "../utils/accessoriesMap";
 
 export default function ProductDetail({
@@ -53,7 +54,13 @@ export default function ProductDetail({
               alt={product.title}
               className="max-h-96 object-contain"
             />
-            {darkPatterns?.highDemand && <HighDemand count={product.highDemand} />}
+            {darkPatterns?.highDemand && (
+              <HighDemand count={product.highDemand} />
+            )}
+            {/* Testimonials Section */}
+            {darkPatterns?.testimonials && product.testimonials && (
+              <Testimonials testimonial={product.testimonials} />
+            )}
           </div>
           {/* Product Details */}
           <div className="flex flex-col justify-between">
@@ -63,11 +70,14 @@ export default function ProductDetail({
               <h1 className="text-3xl font-bold text-gray-900 mb-4">
                 {product.title}
               </h1>
-              {product.discount && darkPatterns?.countdownTimer && product.countdownTimer && (
-                <div className="mb-4 text-blue600 font-semibold">
-                  <CountdownTimer />
-                </div>
-              )}
+               {/* Countdown Timer */}
+              {product.discount &&
+                darkPatterns?.countdownTimer &&
+                product.countdownTimer && (
+                  <div className="mb-4">
+                    <CountdownTimer className="text-blue-600 font-semibold text-sm flex items-center" />
+                  </div>
+                )}
               {/* Product Price */}
               <div className="flex items-center mb-4">
                 {product.discount ? (

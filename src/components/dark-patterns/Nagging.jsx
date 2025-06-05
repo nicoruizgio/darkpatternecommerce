@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Check } from 'lucide-react';
+import React, { useState } from "react";
+import { X, Check } from "lucide-react";
 
 const Nagging = ({ isOpen, onClose, updateDarkPattern }) => {
   const [isSubscribing, setIsSubscribing] = useState(false);
@@ -10,18 +10,15 @@ const Nagging = ({ isOpen, onClose, updateDarkPattern }) => {
   const handleSubscribe = () => {
     setIsSubscribing(true);
 
-    // Simulate subscription process
     setTimeout(() => {
       setIsSubscribing(false);
       setSubscribeSuccess(true);
 
-      // Set nagging to false in dark patterns
       updateDarkPattern("nagging", false);
 
-      // Close after showing success
       setTimeout(() => {
         onClose();
-        // Reset states for next time
+
         setSubscribeSuccess(false);
       }, 1500);
     }, 1000);
@@ -33,7 +30,8 @@ const Nagging = ({ isOpen, onClose, updateDarkPattern }) => {
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+          aria-label="Close"
+          className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 p-1 rounded-full"
         >
           <X size={10} />
         </button>
@@ -48,13 +46,15 @@ const Nagging = ({ isOpen, onClose, updateDarkPattern }) => {
 
             <div className="mb-6">
               <p className="text-gray-600 mb-4 text-center">
-                Subscribe to our premium membership for exclusive deals and get the fastest delivery on all your orders.
+                Subscribe to our premium membership for exclusive deals and get
+                the fastest delivery on all your orders.
               </p>
             </div>
 
             <div className="flex flex-col items-center gap-3">
               <button
                 onClick={handleSubscribe}
+                aria-label="Subscribe Now"
                 className="px-16 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 w-full"
               >
                 Subscribe Now

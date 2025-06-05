@@ -9,6 +9,7 @@ import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import accessoriesMap from "./utils/accessoriesMap";
+import Cookies from "./components/dark-patterns/Cookies";
 
 // Dark patterns
 export const defaultDarkPatterns = {
@@ -18,6 +19,8 @@ export const defaultDarkPatterns = {
   dripPricing: true,
   highDemand: true,
   countdownTimer: true,
+  cookies: true,
+  testimonials: true,
 };
 
 function App() {
@@ -28,7 +31,7 @@ function App() {
   const [darkPatterns, setDarkPatterns] = useState(defaultDarkPatterns);
   const [preselectedAccessories, setPreselectedAccessories] = useState({});
 
-  // New function to update dark patterns
+  //  function to update dark patterns
   const updateDarkPattern = (patternName, value) => {
     setDarkPatterns((prev) => ({
       ...prev,
@@ -47,7 +50,6 @@ function App() {
     }
   }, [status, products]);
 
-  // Add this function to update preselection for a specific product
   const updatePreselection = (productId, isPreselected) => {
     setPreselectedAccessories((prev) => ({
       ...prev,
@@ -91,34 +93,34 @@ function App() {
         7: 6,
         9: 9,
         12: 8,
-        15: 7
+        15: 7,
       };
 
       // Define countdown timer for specific products
-      const countdownTimerProducts = [15,54]
+      const countdownTimerProducts = [15, 54];
 
       // Define custom testimonials for specific products
       const productTestimonials = {
         1: {
           name: "John Smith",
-          testimonial: "This product completely changed my life!"
+          testimonial: "This product completely changed my life!",
         },
         3: {
           name: "Sarah Johnson",
-          testimonial: "Best purchase I've made all year."
+          testimonial: "Best purchase I've made all year.",
         },
         5: {
           name: "Michael Brown",
-          testimonial: "Excellent quality and fast shipping!"
+          testimonial: "Excellent quality and fast shipping!",
         },
         7: {
           name: "Emily Davis",
-          testimonial: "I've recommended this to all my friends."
-        }
+          testimonial: "I've recommended this to all my friends.",
+        },
       };
 
       // Modify products based on ID
-      filteredProducts = filteredProducts.map(product => {
+      filteredProducts = filteredProducts.map((product) => {
         const modifiedProduct = { ...product };
 
         // Apply discount logic
@@ -141,11 +143,6 @@ function App() {
         // Apply testimonials
         if (product.id in productTestimonials) {
           modifiedProduct.testimonials = productTestimonials[product.id];
-        } else {
-          modifiedProduct.testimonials = {
-            name: `Happy Customer ${product.id}`,
-            testimonial: `This ${product.title} exceeded my expectations!`
-          };
         }
 
         return modifiedProduct;
@@ -176,12 +173,9 @@ function App() {
   };
 
   const addToCartWithAccessories = (product) => {
-    // Add the main product
     addToCart(product);
 
-    // Check preselection state for this specific product
     if ((preselectedAccessories[product.id] ?? true) && darkPatterns.sneak) {
-      // Get the appropriate accessory based on product category
       const accessory = accessoriesMap[product.category];
 
       // Add accessory to cart
@@ -217,7 +211,11 @@ function App() {
   return (
     <CountdownProvider>
       <div className="min-h-screen bg-gray-50">
-        <Navbar cartItems={cartItems} />
+        <Navbar
+          cartItems={cartItems}
+          darkPatterns={darkPatterns}
+          updateDarkPattern={updateDarkPattern}
+        />
         <main>
           <Routes>
             <Route
@@ -274,6 +272,7 @@ function App() {
             />
           </Routes>
         </main>
+        <Cookies isEnabled={darkPatterns.cookies} />
       </div>
     </CountdownProvider>
   );

@@ -59,7 +59,7 @@ const Product = ({ addToCart, product, darkPatterns }) => {
       <div className="p-4 mt-auto">
         <button
           onClick={(e) => {
-            e.preventDefault(); // Prevent navigation when clicking the button
+            e.preventDefault();
             addToCart(product);
           }}
           className="w-full flex items-center justify-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
