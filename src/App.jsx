@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
-import axios from "axios";
 import { CountdownProvider } from "./context/CountdownContext";
+import { getUserInfo } from "./utils/getUserInfo";
+import { fetchProducts } from "./utils/fetchProducts";
 
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
@@ -10,8 +11,9 @@ import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import accessoriesMap from "./utils/accessoriesMap";
 import Cookies from "./components/dark-patterns/Cookies";
+import Chatbot from "./components/Chatbot";
 
-// Dark patterns
+// dark patterns
 export const defaultDarkPatterns = {
   forcedRegistration: true,
   nagging: true,
@@ -31,6 +33,11 @@ function App() {
   const [darkPatterns, setDarkPatterns] = useState(defaultDarkPatterns);
   const [preselectedAccessories, setPreselectedAccessories] = useState({});
 
+  // get user info from url when app mounts
+  useEffect(() => {
+    getUserInfo();
+  }, []);
+
   //  function to update dark patterns
   const updateDarkPattern = (patternName, value) => {
     setDarkPatterns((prev) => ({
@@ -39,7 +46,7 @@ function App() {
     }));
   };
 
-  // Initialize preselections when products are loaded
+  // initialize preselections when products are loaded
   useEffect(() => {
     if (status === "succeeded") {
       const initialPreselections = {};
@@ -57,106 +64,23 @@ function App() {
     }));
   };
 
-  // Fetch products
+  // fetch products
   useEffect(() => {
     if (status === "idle") {
-      fetchProducts();
+      setStatus("loading");
+      fetchProducts()
+        .then((filteredProducts) => {
+          setProducts(filteredProducts);
+          setStatus("succeeded");
+        })
+        .catch((err) => {
+          setError(err.message || "Failed to fetch products");
+          setStatus("failed");
+        });
     }
   }, [status]);
 
-  // List of products with missing images
-  const invalidProductsIds = [8, 14, 17, 27];
-
-  const fetchProducts = async () => {
-    setStatus("loading");
-    try {
-      const response = await axios.get(
-        "https://fakestoreapi.in/api/products?limit=150"
-      );
-      let filteredProducts = response.data.products.filter(
-        (product) => !invalidProductsIds.includes(product.id)
-      );
-
-      // Define products that should have no discount
-      const productsWithoutDiscount = [10];
-
-      // Define products with specific discount values
-      const productDiscounts = {
-        12: 50,
-      };
-
-      // Define high demand values for specific products
-      const highDemandValues = {
-        1: 8,
-        2: 9,
-        5: 7,
-        7: 6,
-        9: 9,
-        12: 8,
-        15: 7,
-      };
-
-      // Define countdown timer for specific products
-      const countdownTimerProducts = [15, 54];
-
-      // Define custom testimonials for specific products
-      const productTestimonials = {
-        1: {
-          name: "John Smith",
-          testimonial: "This product completely changed my life!",
-        },
-        3: {
-          name: "Sarah Johnson",
-          testimonial: "Best purchase I've made all year.",
-        },
-        5: {
-          name: "Michael Brown",
-          testimonial: "Excellent quality and fast shipping!",
-        },
-        7: {
-          name: "Emily Davis",
-          testimonial: "I've recommended this to all my friends.",
-        },
-      };
-
-      // Modify products based on ID
-      filteredProducts = filteredProducts.map((product) => {
-        const modifiedProduct = { ...product };
-
-        // Apply discount logic
-        if (productsWithoutDiscount.includes(product.id)) {
-          delete modifiedProduct.discount;
-        } else if (product.id in productDiscounts) {
-          modifiedProduct.discount = productDiscounts[product.id];
-        }
-
-        // Apply high demand value
-        if (product.id in highDemandValues) {
-          modifiedProduct.highDemand = highDemandValues[product.id];
-        }
-
-        // Apply countdown timer
-        if (product.id in countdownTimerProducts) {
-          modifiedProduct.countdownTimer = true;
-        }
-
-        // Apply testimonials
-        if (product.id in productTestimonials) {
-          modifiedProduct.testimonials = productTestimonials[product.id];
-        }
-
-        return modifiedProduct;
-      });
-
-      setProducts(filteredProducts);
-      setStatus("succeeded");
-    } catch (err) {
-      setError(err.message || "Failed to fetch products");
-      setStatus("failed");
-    }
-  };
-
-  // Cart functions
+  // cart functions
   const addToCart = (product) => {
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === product.id);
@@ -178,7 +102,7 @@ function App() {
     if ((preselectedAccessories[product.id] ?? true) && darkPatterns.sneak) {
       const accessory = accessoriesMap[product.category];
 
-      // Add accessory to cart
+      // add accessory to cart
       const accessoryProduct = {
         ...accessory,
         quantity: 1,
@@ -273,6 +197,7 @@ function App() {
           </Routes>
         </main>
         <Cookies isEnabled={darkPatterns.cookies} />
+        <Chatbot />
       </div>
     </CountdownProvider>
   );
