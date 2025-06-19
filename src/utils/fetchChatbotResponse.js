@@ -13,5 +13,5 @@ export async function fetchChatbotResponse(message) {
   });
   if (!response.ok) throw new Error("Failed to fetch chatbot response");
   const data = await response.json();
-  return data.reply || "Sorry, I couldn't understand that.";
+  return data.reply || "Sorry, an error occurred.";
 }
