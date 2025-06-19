@@ -2,19 +2,29 @@ import { useState, useRef, useEffect } from "react";
 import { MessageCircle, X } from "lucide-react";
 import { fetchChatbotResponse } from "../utils/fetchChatbotResponse";
 
-
 export default function Chatbot() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([
-    {
-      sender: "ai",
-      text: "Hi! How can I help you today?",
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
   const messagesEndRef = useRef(null);
+
+  // opening msg
+  useEffect(() => {
+    let timeout;
+    if (open && messages.length === 0) {
+      timeout = setTimeout(() => {
+        setMessages([
+          {
+            sender: "ai",
+            text: "Hi! How can I help you today?",
+          },
+        ]);
+      }, 1000);
+    }
+    return () => clearTimeout(timeout);
+  }, [open, messages.length]);
 
   useEffect(() => {
     if (open && inputRef.current) {
