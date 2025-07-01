@@ -1,14 +1,6 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Param,
-  UseGuards,
-  Logger,
-} from '@nestjs/common';
+import { Controller, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { ChatService } from './modules/chat/service/chat.service';
 import {
-  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -18,27 +10,32 @@ import {
 import { ApiKeyGuard } from './common/guards/api-key.guard';
 
 @ApiTags('Chat')
-@Controller() // @Controller('chat')
+@Controller('')
 @UseGuards(ApiKeyGuard)
 export class AppController {
   constructor(private readonly chatService: ChatService) {}
 
-  @Post('chat/:sessionId')
+  @Post('chat/:userKey')
   @ApiSecurity('x-api-key')
   @ApiOperation({ summary: 'Invoke shopping assistant' })
-  @ApiParam({ name: 'sessionId', description: 'Session ID' })
+  @ApiParam({ name: 'userKey', description: 'Session ID' })
   @ApiBody({
-    schema: { example: { query: 'Hello', context: 'optional' } },
+    schema: {
+      example: {
+        query: 'What can I buy today?',
+        userId: '1234',
+        context: 'I am looking for a new headphone.',
+      },
+    },
   })
   async chat(
-    @Param('sessionId') sessionId: string,
-    @Body() body: { query: string; context?: string },
+    @Param('userKey') userKey: string,
+    @Body() body: { query: string; userId: string },
   ): Promise<any> {
-    Logger.log('Handle Chat:');
-    return this.chatService.handleChat({
-      sessionId: sessionId,
+    return await this.chatService.handleChat({
+      userKey: userKey,
+      sessionId: body.userId,
       query: body.query,
-      context: body.context,
     });
   }
 }

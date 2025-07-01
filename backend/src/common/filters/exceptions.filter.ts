@@ -10,11 +10,10 @@ import {
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
-    console.log('Error: ', exception, host);
-    Logger.error(exception);
+    Logger.error('An error occurred', exception);
     const ctx = host.switchToHttp();
     const response: any = ctx.getResponse();
-    const request = ctx.getRequest();
+    const request: Request = ctx.getRequest();
     const status =
       exception instanceof HttpException
         ? exception.getStatus()

@@ -26,19 +26,26 @@ export class ChatService {
 
   /**
    * Stores a chat message in the database.
+   * @param userKey the user key to differentiate the users
+   * @param sessionId the session id to store the data
+   * @param query the user query
+   * @param response reply from the chat
+   * @param context Optional user context
    */
   async storeMessage(
+    userKey: string,
     sessionId: string,
     query: string,
-    response: any, // @todo: find proper type for response
+    response: string,
     context?: string,
   ): Promise<void> {
-    if (!this.prisma?.ChatMessage) {
+    if (!this.prisma?.chatMessage) {
       return;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    await this.prisma.ChatMessage.create({
+
+    await this.prisma.chatMessage.create({
       data: {
+        userKey,
         sessionId,
         query,
         response,
@@ -49,17 +56,20 @@ export class ChatService {
 
   /**
    * Retrieves messages for a user.
+   * @param userKey identifying user information
+   * @returns the list of messages
    */
-  async getMessages(sessionId: string): Promise<any[]> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-    return await this.prisma?.ChatMessage.findMany({
-      where: { sessionId },
+  async getMessages(userKey: string): Promise<any[]> {
+    return await this.prisma?.chatMessage.findMany({
+      where: { userKey },
       orderBy: { createdAt: 'desc' },
     });
   }
 
   /**
    * Handles chat logic with structured output.
+   * @param params
+   * @returns a response from the chat bot
    */
   async handleChat(params: ChatDto): Promise<any> {
     try {
@@ -81,22 +91,25 @@ export class ChatService {
           messages: [
             new SystemMessage(structuredPrompt),
             new HumanMessage(params.query),
-            params.context
-              ? new HumanMessage(params.context)
-              : new HumanMessage('Help user to do the shopping'),
+            new HumanMessage(params.context || ''),
           ],
         },
         { configurable: { thread_id: params.sessionId } },
       );
 
+      const reply = result.messages
+        ? result.messages[result.messages?.length - 1]?.text
+        : '{}';
+
       await this.storeMessage(
+        params.userKey,
         params.sessionId,
         params.query,
-        result.messages,
+        reply,
         params.context,
       );
 
-      return result;
+      return reply;
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException('Failed to process chat.');

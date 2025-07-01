@@ -2,7 +2,7 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
-  UnauthorizedException,
+  Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
@@ -17,12 +17,14 @@ export class ApiKeyGuard implements CanActivate {
     const headers: IncomingHttpHeaders = request.headers;
     const apiKey: string | string[] = headers['x-api-key'] ?? '';
     if (!apiKey) {
-      console.log('Headers: ', headers);
-      throw new Error('API key missing');
+      Logger.error('API key missing');
+      return false;
     }
+
     const validKey = this.configService.get('CHAT_API_KEY');
     if (apiKey !== validKey) {
-      throw new UnauthorizedException('Invalid API Key');
+      Logger.error('Invalid API Key');
+      return false;
     }
     return true;
   }
