@@ -1,0 +1,39 @@
+node_modules/
+dist/
+
+*.log
+.git
+.env
+.gitignore
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment files
+.env
+
+# Dependency directories
+node_modules/
+venv/
+
+# Python cache
+*.pyc
+*.pyo
+*.pyd
+
+# IDEs and editors
+.vscode/
+.idea/
+
+# Build outputs
+dist/
+build/
+
+# Coverage reports
+coverage/
+*.cover
+*.lcov
