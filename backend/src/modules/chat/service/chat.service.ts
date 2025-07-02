@@ -13,6 +13,7 @@ import { createReactAgent } from '@langchain/langgraph/prebuilt';
 export class ChatService {
   private agentModel: ChatOpenAI;
   private agentTools: any[] = [];
+  private agentCheckpointerMemory;
 
   constructor(private prisma: PrismaService) {
     if (!process.env.OPENAI_API_KEY) {
@@ -22,6 +23,7 @@ export class ChatService {
       temperature: 0.5,
       openAIApiKey: process.env.OPENAI_API_KEY ?? 'test',
     });
+    this.agentCheckpointerMemory = new MemorySaver();
   }
 
   /**
@@ -77,11 +79,10 @@ export class ChatService {
         StructuredShoppingResponse,
       );
 
-      const agentCheckpointer = new MemorySaver();
       const agent = createReactAgent({
         llm: this.agentModel,
         tools: this.agentTools,
-        checkpointSaver: agentCheckpointer,
+        checkpointSaver: this.agentCheckpointerMemory,
       });
 
       const structuredPrompt = `${promptTemplates.assistant}\n\n${parser.getFormatInstructions()}`;
@@ -94,7 +95,7 @@ export class ChatService {
             new HumanMessage(params.context || ''),
           ],
         },
-        { configurable: { thread_id: params.sessionId } },
+        { configurable: { thread_id: '1234' } },
       );
 
       const reply = result.messages

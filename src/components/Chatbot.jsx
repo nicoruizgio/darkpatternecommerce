@@ -120,14 +120,18 @@ export default function Chatbot({ addToCart }) {
                         : "bg-gray-100 text-gray-800"
                     }`}
                   >
-                    <p>{msg.text}</p>
+                    <Markdown>{msg.text}</Markdown>
                     {msg.sender === "ai" &&
                       msg.products?.length > 0 &&
                       msg.products.map((product, index) => (
-                        <div key={index}>
-                          {product.title}
-                          {product.descritpion}
-                          {product.image}
+                        <div
+                          key={index}
+                          className="p-3 border-1 mb-3 mt-2 rounded-lg bg-gray-300"
+                          style={{ cursor: "pointer" }}
+                        >
+                          <h1>{product.title}</h1>
+                          <h2>{product.descritpion}</h2>
+                          <p>{product.price}$</p>
                         </div>
                       ))}
                   </div>

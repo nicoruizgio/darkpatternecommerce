@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Param, UseGuards, Get } from '@nestjs/common';
 import { ChatService } from './modules/chat/service/chat.service';
 import {
   ApiBody,
@@ -14,6 +14,12 @@ import { ApiKeyGuard } from './common/guards/api-key.guard';
 @UseGuards(ApiKeyGuard)
 export class AppController {
   constructor(private readonly chatService: ChatService) {}
+
+  @Get('/')
+  @ApiOperation({ summary: 'Health check' })
+  healthCheck(): number {
+    return 200;
+  }
 
   @Post('chat/:userKey')
   @ApiSecurity('x-api-key')
