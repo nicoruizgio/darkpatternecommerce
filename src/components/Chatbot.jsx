@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { MessageCircle, X } from "lucide-react";
 import { fetchChatbotResponse } from "../utils/fetchChatbotResponse";
+import Markdown from "react-markdown";
 
-export default function Chatbot() {
+export default function Chatbot({ addToCart }) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
@@ -51,9 +52,24 @@ export default function Chatbot() {
       inputRef.current.style.overflowY = "hidden";
     }
     try {
-      const reply = await fetchChatbotResponse(trimmed);
-      setMessages((msgs) => [...msgs, { sender: "ai", text: reply }]);
+      const chatData = await fetchChatbotResponse(trimmed);
+      setMessages((msgs) => [
+        ...msgs,
+        {
+          sender: "ai",
+          text: chatData?.reply,
+          products: chatData?.products || [],
+        },
+      ]);
+
+      if (chatData?.action === "addToCart") {
+        chatData.products &&
+          chatData.products.forEach((product) => {
+            addToCart(product);
+          });
+      }
     } catch (err) {
+      console.error("Error: ", err);
       setMessages((msgs) => [
         ...msgs,
         { sender: "ai", text: "Sorry, something went wrong." },
@@ -77,7 +93,7 @@ export default function Chatbot() {
 
       {/* chat window*/}
       {open && (
-        <div className="fixed bottom-6 right-6 z-50 w-[28rem] bg-white rounded-xl shadow-2xl flex flex-col animate-slide-up min-h-[40vh] h-[50vh] max-h-[80vh]">
+        <div className="fixed bottom-6 right-6 z-50 w-[28rem] bg-white rounded-xl shadow-2xl flex flex-col animate-slide-up min-h-[80vh] h-[80vh] max-h-[80vh]">
           <div className="flex items-center justify-between px-4 py-3 border-b">
             <span className="font-semibold text-gray-800">AI Assistant</span>
             <button
@@ -93,7 +109,9 @@ export default function Chatbot() {
               {messages.map((msg, idx) => (
                 <div
                   key={idx}
-                  className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+                  className={`flex ${
+                    msg.sender === "user" ? "justify-end" : "justify-start"
+                  }`}
                 >
                   <div
                     className={`px-4 py-2 rounded-lg max-w-[80%] text-sm whitespace-pre-line break-words ${
@@ -102,7 +120,20 @@ export default function Chatbot() {
                         : "bg-gray-100 text-gray-800"
                     }`}
                   >
-                    {msg.text}
+                    <Markdown>{msg.text}</Markdown>
+                    {msg.sender === "ai" &&
+                      msg.products?.length > 0 &&
+                      msg.products.map((product, index) => (
+                        <div
+                          key={index}
+                          className="p-3 border-1 mb-3 mt-2 rounded-lg bg-gray-300"
+                          style={{ cursor: "pointer" }}
+                        >
+                          <h1>{product.title}</h1>
+                          <h2>{product.descritpion}</h2>
+                          <p>{product.price}$</p>
+                        </div>
+                      ))}
                   </div>
                 </div>
               ))}
@@ -116,11 +147,14 @@ export default function Chatbot() {
               <div ref={messagesEndRef} />
             </div>
           </div>
-          <form className="p-4 pt-0 flex flex-row items-start" onSubmit={handleSend}>
+          <form
+            className="p-4 pt-0 flex flex-row items-start"
+            onSubmit={handleSend}
+          >
             <textarea
               ref={inputRef}
               value={input}
-              onChange={e => {
+              onChange={(e) => {
                 setInput(e.target.value);
                 e.target.style.height = "auto";
                 e.target.style.height = e.target.scrollHeight + "px";
@@ -130,7 +164,7 @@ export default function Chatbot() {
                   e.target.style.overflowY = "hidden";
                 }
               }}
-              onKeyDown={e => {
+              onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
                   if (!loading && input.trim()) {
@@ -142,13 +176,21 @@ export default function Chatbot() {
               rows={1}
               disabled={loading}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-all"
-              style={{ minHeight: "2.5rem", maxHeight: "8rem", overflowY: "hidden" }}
+              style={{
+                minHeight: "2.5rem",
+                maxHeight: "8rem",
+                overflowY: "hidden",
+              }}
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
               className="ml-1 px-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
-              style={{ height: "2.5rem", minHeight: "2.5rem", maxHeight: "2.5rem" }}
+              style={{
+                height: "2.5rem",
+                minHeight: "2.5rem",
+                maxHeight: "2.5rem",
+              }}
             >
               Send
             </button>

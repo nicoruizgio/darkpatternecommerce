@@ -197,7 +197,7 @@ function App() {
           </Routes>
         </main>
         <Cookies isEnabled={darkPatterns.cookies} />
-        <Chatbot />
+        <Chatbot addToCart={addToCart} />
       </div>
     </CountdownProvider>
   );
